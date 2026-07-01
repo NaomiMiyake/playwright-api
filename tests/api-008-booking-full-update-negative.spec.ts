@@ -19,8 +19,8 @@ test.beforeEach(async ({ request }) => {
 
 const bookingUpdateData = bookingUpdateTestData;
 
-for (const bookingData of bookingTestData) {
-    test(`[API-008] Reject full update request without authentication - ${bookingData.firstname}`, async () => {
+for (const [index, bookingData] of bookingTestData.entries()) {
+    test(`[API-008] Reject full update request without authentication - ${index}`, async () => {
         // Create
         const createResponse = await bookingApi.createBooking(bookingData);
         expect(createResponse.status()).toBe(200);
