@@ -20,7 +20,9 @@ test.beforeEach(async ({ request }) => {
 const bookingPUpdateData = bookingPartialUpdateTestData;
 
 for (const bookingData of bookingTestData) {
-    test(`[API-007] Reject partial update request without authentication - ${bookingData.firstname}`, async () => {
+    const testTitle = `[API-007] Reject partial update request without authentication - ${bookingData.testCaseId}`;
+
+    test(testTitle, async () => {
         // Create
         const createResponse = await bookingApi.createBooking(bookingData);
         expect(createResponse.status()).toBe(200);
