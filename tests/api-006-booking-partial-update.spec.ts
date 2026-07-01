@@ -1,0 +1,68 @@
+import { test, expect } from '@playwright/test';
+import { Booking, CreateBookingResponse } from '../types/booking';
+import { getAuthToken } from '../utils/auth';
+import { BookingApi } from '../api/booking-api';
+import { bookingTestData } from '../data/booking-data';
+import { bookingPartialUpdateTestData } from '../data/booking-data-update';
+import { verifyBooking } from '../utils/booking-assertions';
+
+let bookingApi: BookingApi;
+let token: string;
+
+test.beforeAll(async ({ request }) => {
+    token = await getAuthToken(request);
+});
+
+test.beforeEach(async ({ request }) => {
+    bookingApi = new BookingApi(request);
+});
+
+const bookingPUpdateData = bookingPartialUpdateTestData;
+
+for (const bookingData of bookingTestData) {
+    test(`[API-006] Partially update booking with valid token - ${bookingData.firstname}`, async () => {
+        // Create
+        const createResponse = await bookingApi.createBooking(bookingData);
+        expect(createResponse.status()).toBe(200);
+
+        const createBody: CreateBookingResponse = await createResponse.json();
+        const bookingId = createBody.bookingid;
+
+        expect(typeof bookingId).toBe('number');
+        expect(bookingId).toBeGreaterThan(0);
+
+        // Retrieve
+        const getResponse = await bookingApi.getBooking(bookingId);
+        expect(getResponse.status()).toBe(200);
+
+        const getBody: Booking = await getResponse.json();
+        verifyBooking(getBody, bookingData);
+
+        // Partial update
+        const updateResponse = await bookingApi.partialUpdateBooking(
+            bookingId,
+            token,
+            bookingPUpdateData
+        );
+        expect(updateResponse.status()).toBe(200);
+
+        const updateBody: Booking = await updateResponse.json();
+        bookingData.firstname = bookingPUpdateData.firstname;
+        verifyBooking(updateBody, bookingData);
+
+        // Retrieve updated booking
+        const getUpdateResponse = await bookingApi.getBooking(bookingId);
+        expect(getUpdateResponse.status()).toBe(200);
+
+        const getUpdateBody: Booking = await getUpdateResponse.json();
+        verifyBooking(getUpdateBody, bookingData);
+
+        // Delete
+        const deleteResponse = await bookingApi.deleteBooking(bookingId, token);
+        expect(deleteResponse.status()).toBe(201);
+
+        // Verify result
+        const getDeletedResponse = await bookingApi.getBooking(bookingId);
+        expect(getDeletedResponse.status()).toBe(404);
+    });
+}

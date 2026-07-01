@@ -1,0 +1,39 @@
+{
+    "name": "playwright-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "test": "playwright test",
+        "lint": "eslint .",
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NaomiMiyake/playwright-api.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/NaomiMiyake/playwright-api/issues"
+    },
+    "homepage": "https://github.com/NaomiMiyake/playwright-api#readme",
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@playwright/test": "^1.61.1",
+        "@types/node": "^26.0.0",
+        "eslint": "^10.6.0",
+        "eslint-config-prettier": "^10.1.8",
+        "prettier": "^3.9.4",
+        "typescript-eslint": "^8.62.1"
+    },
+    "dependencies": {
+        "dotenv": "^17.4.2"
+    }
+}
