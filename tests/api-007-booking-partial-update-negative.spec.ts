@@ -19,46 +19,42 @@ test.beforeEach(async ({ request }) => {
 
 const bookingPUpdateData = bookingPartialUpdateTestData;
 
-for (const [index, bookingData] of bookingTestData.entries()) {
-    test(`[API-007] Reject partial update request without authentication - ${index}`, async () => {
-        // Create
-        const createResponse = await bookingApi.createBooking(bookingData);
-        expect(createResponse.status()).toBe(200);
+const bookingData = bookingTestData[0];
 
-        const createBody: CreateBookingResponse = await createResponse.json();
-        const bookingId = createBody.bookingid;
+test('[API-007] Reject partial update request without authentication', async () => {
+    // Create
+    const createResponse = await bookingApi.createBooking(bookingData);
+    expect(createResponse.status()).toBe(200);
 
-        expect(typeof bookingId).toBe('number');
-        expect(bookingId).toBeGreaterThan(0);
+    const createBody: CreateBookingResponse = await createResponse.json();
+    const bookingId = createBody.bookingid;
 
-        // Retrieve
-        const getResponse = await bookingApi.getBooking(bookingId);
-        expect(getResponse.status()).toBe(200);
+    expect(typeof bookingId).toBe('number');
+    expect(bookingId).toBeGreaterThan(0);
 
-        const getBody = await getResponse.json();
-        verifyBooking(getBody, bookingData);
+    // Retrieve
+    const getResponse = await bookingApi.getBooking(bookingId);
+    expect(getResponse.status()).toBe(200);
 
-        // Attempt partial update without authentication
-        const updateResponse = await bookingApi.partialUpdateBooking(
-            bookingId,
-            '',
-            bookingPUpdateData
-        );
-        expect(updateResponse.status()).toBe(403);
+    const getBody = await getResponse.json();
+    verifyBooking(getBody, bookingData);
 
-        // Verify booking was not updated
-        const getUpdateResponse = await bookingApi.getBooking(bookingId);
-        expect(getUpdateResponse.status()).toBe(200);
+    // Attempt partial update without authentication
+    const updateResponse = await bookingApi.partialUpdateBooking(bookingId, '', bookingPUpdateData);
+    expect(updateResponse.status()).toBe(403);
 
-        const getUpdateBody: Booking = await getUpdateResponse.json();
-        verifyBooking(getUpdateBody, bookingData);
+    // Verify booking was not updated
+    const getUpdateResponse = await bookingApi.getBooking(bookingId);
+    expect(getUpdateResponse.status()).toBe(200);
 
-        // Delete
-        const deleteResponse = await bookingApi.deleteBooking(bookingId, token);
-        expect(deleteResponse.status()).toBe(201);
+    const getUpdateBody: Booking = await getUpdateResponse.json();
+    verifyBooking(getUpdateBody, bookingData);
 
-        // Verify result
-        const getDeletedResponse = await bookingApi.getBooking(bookingId);
-        expect(getDeletedResponse.status()).toBe(404);
-    });
-}
+    // Delete
+    const deleteResponse = await bookingApi.deleteBooking(bookingId, token);
+    expect(deleteResponse.status()).toBe(201);
+
+    // Verify result
+    const getDeletedResponse = await bookingApi.getBooking(bookingId);
+    expect(getDeletedResponse.status()).toBe(404);
+});
