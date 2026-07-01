@@ -332,6 +332,14 @@ GitHub Actions automatically runs all API tests on every push and pull request.
 - Integrate API and UI end-to-end test scenarios
 - Improve reusable utilities and assertions
 
+## Live Test Report
+
+The latest Playwright HTML report is automatically published via GitHub Pages.
+
+**Latest report:**
+
+https://naomimiyake.github.io/playwright-api/
+
 ## Author
 
 Personal learning project demonstrating API test automation using Playwright and TypeScript.
